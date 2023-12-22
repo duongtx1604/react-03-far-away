@@ -6,7 +6,6 @@ const initialItems = [
     { id: 3, description: "Charger", quantity: 12, packed: false },
     { id: 4, description: "Book", quantity: 12, packed: true },
     { id: 5, description: "Apple", quantity: 12, packed: false },
-    { id: 6, description: "Tivi", quantity: 12, packed: true },
 ];
 
 export default function App() {
@@ -15,13 +14,15 @@ export default function App() {
     function handleAddItem(item) {
         setItems((items) => [...items, item]);
     }
-    function handlePacked(id) {
-        setItems((items) =>
-            items.map((item) => item.id === id && !item.packed)
-        );
-    }
     function handleDeleteItem(id) {
         setItems((items) => items.filter((item) => item.id !== id));
+    }
+    function handlePacked(id) {
+        setItems((items) =>
+            items.map((item) =>
+                item.id === id ? { ...item, packed: !item.packed } : item
+            )
+        );
     }
     return (
         <div className="app">
@@ -52,9 +53,7 @@ function Form({ onAddItems }) {
             quantity,
             package: false,
         };
-        // console.log(newItem);
         onAddItems(newItem);
-        // console.log(items);
 
         setDescription("");
         setQuantity(1);
@@ -103,8 +102,13 @@ function PackingList({ items, onDeleteItem, onPacked }) {
 function Item({ item, onDeleteItem, onPacked }) {
     return (
         <li>
+            <input
+                type="checkbox"
+                value={item.packed}
+                onChange={() => onPacked(item.id)}
+                checked={item.packed === true && "checked"}
+            />
             <span style={item.packed ? { textDecoration: "line-through" } : {}}>
-                {/* <input type="checkbox" onChange={() => onPacked(item.id)} /> */}
                 {item.quantity} {item.description}
             </span>
             <button onClick={() => onDeleteItem(item.id)}>❌</button>
